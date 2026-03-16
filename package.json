@@ -1,0 +1,42 @@
+{
+  "name": "infoset-mcp",
+  "version": "2.0.0",
+  "description": "Infoset CRM MCP Server — Model Context Protocol server for Infoset ticket management",
+  "main": "src/mcp-server.mjs",
+  "type": "module",
+  "scripts": {
+    "start": "node src/mcp-server.mjs",
+    "test": "NODE_OPTIONS='--experimental-vm-modules' jest"
+  },
+  "keywords": [
+    "mcp",
+    "model-context-protocol",
+    "infoset",
+    "crm",
+    "helpdesk",
+    "tickets",
+    "claude"
+  ],
+  "author": "Hakan",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/hakancanalp/infoset-mcp.git"
+  },
+  "bugs": {
+    "url": "https://github.com/hakancanalp/infoset-mcp/issues"
+  },
+  "homepage": "https://github.com/hakancanalp/infoset-mcp#readme",
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.27.1",
+    "axios": "^1.7.0",
+    "dotenv": "^16.4.0",
+    "zod": "^4.3.6"
+  },
+  "devDependencies": {
+    "jest": "^29.0.0"
+  }
+}
