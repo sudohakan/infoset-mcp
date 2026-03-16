@@ -21,12 +21,12 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/hakancanalp/infoset-mcp.git"
+    "url": "git+https://github.com/sudohakan/infoset-mcp.git"
   },
   "bugs": {
-    "url": "https://github.com/hakancanalp/infoset-mcp/issues"
+    "url": "https://github.com/sudohakan/infoset-mcp/issues"
   },
-  "homepage": "https://github.com/hakancanalp/infoset-mcp#readme",
+  "homepage": "https://github.com/sudohakan/infoset-mcp#readme",
   "engines": {
     "node": ">=18.0.0"
   },
