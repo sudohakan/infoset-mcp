@@ -1,38 +1,38 @@
 # infoset-mcp
 
-Infoset CRM MCP Server — Claude Code ve diger MCP client'lar icin.
+Infoset CRM MCP Server — a [Model Context Protocol](https://modelcontextprotocol.io/) server for Infoset ticket management.
 
-Infoset destek bilet sistemiyle entegrasyon saglayan [Model Context Protocol](https://modelcontextprotocol.io/) server'i. Ticket listeleme, detay goruntuleme, arama, olusturma, guncelleme ve istatistik sorgulama islemlerini MCP tool'lari uzerinden sunar.
+Provides integration with the Infoset helpdesk system through MCP tools. Supports ticket listing, detail viewing, searching, creating, updating, and statistics queries for use with Claude Code and other MCP-compatible clients.
 
-## Kurulum
+## Setup
 
 ```bash
 npm install
 ```
 
-`.env.example` dosyasini `.env` olarak kopyalayip doldurun:
+Copy `.env.example` to `.env` and fill in your credentials:
 
 ```bash
 cp .env.example .env
 ```
 
-Gerekli degiskenler:
+Required variables:
 
-| Degisken | Aciklama |
-|----------|----------|
+| Variable | Description |
+|----------|-------------|
 | `INFOSET_EMAIL` | Infoset login email |
 | `INFOSET_PASSWORD` | Infoset login password |
-| `INFOSET_BASE_URL` | API base URL (varsayilan: `https://api.infoset.app`) |
+| `INFOSET_BASE_URL` | API base URL (default: `https://api.infoset.app`) |
 
-## MCP Konfigurasyonu
+## MCP Configuration
 
-`.claude.json` dosyasina ekleyin:
+Add the following to your `.claude.json`:
 
 ```json
 {
   "mcpServers": {
     "infoset": {
-      "command": "node.exe",
+      "command": "node",
       "args": ["C:\\dev\\infoset-mcp\\src\\mcp-server.mjs"],
       "env": {
         "INFOSET_EMAIL": "your-email@example.com",
@@ -44,52 +44,64 @@ Gerekli degiskenler:
 }
 ```
 
-## Tool Listesi
+## Tools
 
-| # | Tool | Aciklama |
-|---|------|----------|
-| 1 | `infoset_list_tickets` | Ticket listele — status, owner, tarih filtresi ve sayfalama |
-| 2 | `infoset_get_ticket` | Tek ticket detayi getir |
-| 3 | `infoset_get_ticket_logs` | Ticket aktivite loglarini getir |
-| 4 | `infoset_get_email` | Email icerigini ID ile getir |
-| 5 | `infoset_get_sla_breaches` | Ticket SLA ihlal verilerini getir |
-| 6 | `infoset_get_contact` | Kisi bilgilerini ID ile getir |
-| 7 | `infoset_search_tickets` | Ticketlarda anahtar kelime araması |
-| 8 | `infoset_create_ticket` | Yeni ticket olustur |
-| 9 | `infoset_update_ticket` | Mevcut ticketi guncelle (status, priority, owner, subject) |
-| 10 | `infoset_list_contacts` | Kisi listele/ara |
-| 11 | `infoset_get_company` | Sirket bilgilerini ID ile getir |
-| 12 | `infoset_get_ticket_stats` | Ticket istatistikleri (status bazinda sayilar) |
+| # | Tool | Description |
+|---|------|-------------|
+| 1 | `infoset_list_tickets` | List tickets with status, owner, date filters and pagination |
+| 2 | `infoset_get_ticket` | Get single ticket detail by ID |
+| 3 | `infoset_get_ticket_logs` | Get activity logs for a ticket |
+| 4 | `infoset_get_email` | Get email content by email ID |
+| 5 | `infoset_get_sla_breaches` | Get SLA breach data for a ticket |
+| 6 | `infoset_get_contact` | Get contact information by ID |
+| 7 | `infoset_search_tickets` | Search tickets by keyword |
+| 8 | `infoset_create_ticket` | Create a new ticket |
+| 9 | `infoset_update_ticket` | Update an existing ticket (status, priority, owner, subject) |
+| 10 | `infoset_list_contacts` | List or search contacts |
+| 11 | `infoset_get_company` | Get company information by ID |
+| 12 | `infoset_get_ticket_stats` | Get ticket statistics (counts by status) |
 
-## Kullanim Ornekleri
+## Usage Examples
 
 ```
-# Acik ticketlari listele
+# List open tickets
 mcp__infoset__infoset_list_tickets status=[1,2] itemsPerPage=50
 
-# Ticket detayi
+# Get ticket detail
 mcp__infoset__infoset_get_ticket ticketId=8837516
 
-# Ticket ara
-mcp__infoset__infoset_search_tickets query="odeme hatasi"
+# Search tickets
+mcp__infoset__infoset_search_tickets query="payment error"
 
-# SLA ihlallerini kontrol et
+# Check SLA breaches
 mcp__infoset__infoset_get_sla_breaches ticketId=8837516
 
-# Istatistikler
+# Get statistics
 mcp__infoset__infoset_get_ticket_stats
 ```
 
-## Gelistirme
+## Development
 
 ```bash
-# Test calistir
+# Run tests
 npm test
 
-# Server'i dogrudan baslat
+# Start server directly
 npm start
 ```
 
-## Lisans
+## Releasing
+
+This project uses [Semantic Versioning](https://semver.org/). To create a new release:
+
+```bash
+# Update CHANGELOG.md with new version notes
+git tag -a v2.1.0 -m "v2.1.0"
+git push origin v2.1.0
+```
+
+The GitHub Actions release workflow automatically creates a GitHub Release with notes extracted from `CHANGELOG.md`.
+
+## License
 
 MIT
