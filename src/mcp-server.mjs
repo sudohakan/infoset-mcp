@@ -76,6 +76,15 @@ async function apiRequest(method, url, data = null, params = null) {
       }
       return res.data;
     } catch (err) {
+      if (err.response && err.response.status === 401 && retries < maxRetries) {
+        retries++;
+        console.error(`401 unauthorized, refreshing token (retry ${retries}/${maxRetries})...`);
+        jwtToken = null;
+        tokenExpiry = 0;
+        await ensureAuth();
+        config.headers['Authorization'] = `Bearer ${jwtToken}`;
+        continue;
+      }
       if (err.response && err.response.status === 429 && retries < maxRetries) {
         retries++;
         console.error(`429 rate limited, retry ${retries}/${maxRetries}, waiting 60s...`);
