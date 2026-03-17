@@ -105,9 +105,11 @@ npm start
 This project uses [Semantic Versioning](https://semver.org/). To create a new release:
 
 ```bash
-# Update CHANGELOG.md with new version notes
-git tag -a v2.1.0 -m "v2.1.0"
-git push origin v2.1.0
+# 1. Bump version in package.json
+# 2. Update CHANGELOG.md with new version notes
+# 3. Commit, tag and push
+git tag -a vX.Y.Z -m "vX.Y.Z"
+git push origin vX.Y.Z
 ```
 
 The GitHub Actions release workflow automatically creates a GitHub Release with notes extracted from `CHANGELOG.md`.
