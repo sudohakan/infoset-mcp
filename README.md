@@ -1,5 +1,11 @@
 # infoset-mcp
 
+[![CI](https://github.com/sudohakan/infoset-mcp/actions/workflows/ci.yml/badge.svg)](https://github.com/sudohakan/infoset-mcp/actions/workflows/ci.yml)
+[![Release](https://github.com/sudohakan/infoset-mcp/actions/workflows/release.yml/badge.svg)](https://github.com/sudohakan/infoset-mcp/actions/workflows/release.yml)
+[![GitHub release](https://img.shields.io/github/v/release/sudohakan/infoset-mcp)](https://github.com/sudohakan/infoset-mcp/releases)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Node.js](https://img.shields.io/badge/node-%3E%3D18.0.0-brightgreen)](https://nodejs.org/)
+
 Infoset CRM MCP Server — a [Model Context Protocol](https://modelcontextprotocol.io/) server for Infoset ticket management.
 
 Provides integration with the Infoset helpdesk system through MCP tools. Supports ticket listing, detail viewing, searching, creating, updating, and statistics queries for use with Claude Code and other MCP-compatible clients.
