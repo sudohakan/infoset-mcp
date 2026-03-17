@@ -375,14 +375,25 @@ describe('mcp-server.mjs', () => {
     });
   });
 
-  // ── 401 Handling (Gap) ───────────────────────────────────────────────────
-  describe('401 handling — no token refresh', () => {
-    test('401 error is NOT retried (known gap)', async () => {
+  // ── 401 Handling ────────────────────────────────────────────────────────
+  describe('401 handling — automatic token refresh', () => {
+    test('401 triggers re-login and retries the request', async () => {
       mockApiError(401, { message: 'Unauthorized' });
+      mockApiResponse({ id: 123, subject: 'Test' });
+
+      const result = await toolHandlers.infoset_get_ticket({ ticketId: 123 });
+      const parsed = JSON.parse(result.content[0].text);
+      expect(parsed.id).toBe(123);
+    });
+
+    test('401 after max retries throws error', async () => {
+      mockApiError(401, { message: 'Unauthorized' });
+      mockApiError(401, { message: 'Unauthorized' });
+      mockApiError(401, { message: 'Unauthorized' });
+      mockApiError(401, { message: 'Unauthorized' });
+
       await expect(toolHandlers.infoset_get_ticket({ ticketId: 1 }))
         .rejects.toThrow(/401/);
-      // Note: apiRequest does NOT retry on 401. Only 429 gets retried.
-      // This confirms Task #1 finding: token refresh on 401 is missing.
     });
   });
 });
