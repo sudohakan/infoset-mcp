@@ -16,13 +16,9 @@ Provides integration with the Infoset helpdesk system through MCP tools. Support
 npm install
 ```
 
-Copy `.env.example` to `.env` and fill in your credentials:
+### Configuration
 
-```bash
-cp .env.example .env
-```
-
-Required variables:
+Credentials are passed as environment variables. Choose **one** of the following methods:
 
 | Variable | Description |
 |----------|-------------|
@@ -30,16 +26,16 @@ Required variables:
 | `INFOSET_PASSWORD` | Infoset login password |
 | `INFOSET_BASE_URL` | API base URL (default: `https://api.infoset.app`) |
 
-## MCP Configuration
+**Option A — MCP client config (recommended):**
 
-Add the following to your `.claude.json`:
+Add to your `.claude.json` (or equivalent MCP client config). The `env` block provides the credentials directly — no `.env` file needed.
 
 ```json
 {
   "mcpServers": {
     "infoset": {
       "command": "node",
-      "args": ["C:\\dev\\infoset-mcp\\src\\mcp-server.mjs"],
+      "args": ["/path/to/infoset-mcp/src/mcp-server.mjs"],
       "env": {
         "INFOSET_EMAIL": "your-email@example.com",
         "INFOSET_PASSWORD": "your-password",
@@ -48,6 +44,14 @@ Add the following to your `.claude.json`:
     }
   }
 }
+```
+
+**Option B — `.env` file (standalone usage):**
+
+```bash
+cp .env.example .env
+# Edit .env with your credentials
+npm start
 ```
 
 ## Tools
