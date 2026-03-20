@@ -210,8 +210,8 @@ describe('mcp-server.mjs', () => {
     });
 
     test('infoset_search_tickets returns search results', async () => {
-      mockApiResponse({ items: [{ id: 5, subject: 'Ödeme' }], totalItems: 1 });
-      const result = await toolHandlers.infoset_search_tickets({ query: 'ödeme' });
+      mockApiResponse({ items: [{ id: 5, subject: 'Payment issue' }], totalItems: 1 });
+      const result = await toolHandlers.infoset_search_tickets({ query: 'payment' });
       const parsed = JSON.parse(result.content[0].text);
       expect(parsed.totalItems).toBe(1);
     });

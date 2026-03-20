@@ -1,8 +1,15 @@
 {
   "name": "infoset-mcp",
-  "version": "2.1.0",
+  "version": "2.1.1",
+  "type": "module",
   "description": "Infoset CRM MCP Server — Model Context Protocol server for Infoset ticket management",
   "main": "src/mcp-server.mjs",
+  "files": [
+    "src/",
+    "README.md",
+    "LICENSE",
+    "CHANGELOG.md"
+  ],
   "scripts": {
     "start": "node src/mcp-server.mjs",
     "test": "NODE_OPTIONS='--experimental-vm-modules' jest"
@@ -14,9 +21,10 @@
     "crm",
     "helpdesk",
     "tickets",
-    "claude"
+    "claude",
+    "ai-tools"
   ],
-  "author": "Hakan",
+  "author": "Hakan <hakan@finekra.com>",
   "license": "MIT",
   "repository": {
     "type": "git",

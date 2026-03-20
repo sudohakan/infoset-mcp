@@ -3,7 +3,6 @@ import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js'
 import { z } from 'zod';
 import axios from 'axios';
 
-// ── Config ──────────────────────────────────────────
 const BASE_URL = process.env.INFOSET_BASE_URL || 'https://api.infoset.app';
 const EMAIL = process.env.INFOSET_EMAIL;
 const PASSWORD = process.env.INFOSET_PASSWORD;
@@ -13,7 +12,6 @@ if (!EMAIL || !PASSWORD) {
   process.exit(1);
 }
 
-// ── Auth Manager ────────────────────────────────────
 let jwtToken = null;
 let tokenExpiry = 0;
 let userId = null;
@@ -43,7 +41,6 @@ async function ensureAuth() {
   }
 }
 
-// ── HTTP Client with Rate Limit + Retry ─────────────
 function sleep(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
@@ -98,13 +95,11 @@ async function apiRequest(method, url, data = null, params = null) {
   }
 }
 
-// ── MCP Server ──────────────────────────────────────
 const server = new McpServer({
   name: 'infoset',
-  version: '1.0.0',
+  version: '2.1.1',
 });
 
-// ── Tool 1: list_tickets ────────────────────────────
 server.registerTool(
   'infoset_list_tickets',
   {
@@ -140,7 +135,6 @@ server.registerTool(
   }
 );
 
-// ── Tool 2: get_ticket ──────────────────────────────
 server.registerTool(
   'infoset_get_ticket',
   {
@@ -155,7 +149,6 @@ server.registerTool(
   }
 );
 
-// ── Tool 3: get_ticket_logs ─────────────────────────
 server.registerTool(
   'infoset_get_ticket_logs',
   {
@@ -174,7 +167,6 @@ server.registerTool(
   }
 );
 
-// ── Tool 4: get_email ───────────────────────────────
 server.registerTool(
   'infoset_get_email',
   {
@@ -189,7 +181,6 @@ server.registerTool(
   }
 );
 
-// ── Tool 5: get_sla_breaches ────────────────────────
 server.registerTool(
   'infoset_get_sla_breaches',
   {
@@ -204,7 +195,6 @@ server.registerTool(
   }
 );
 
-// ── Tool 6: get_contact ─────────────────────────────
 server.registerTool(
   'infoset_get_contact',
   {
@@ -219,7 +209,6 @@ server.registerTool(
   }
 );
 
-// ── Tool 7: search_tickets ──────────────────────────
 server.registerTool(
   'infoset_search_tickets',
   {
@@ -251,7 +240,6 @@ server.registerTool(
   }
 );
 
-// ── Tool 8: create_ticket ───────────────────────────
 server.registerTool(
   'infoset_create_ticket',
   {
@@ -278,7 +266,6 @@ server.registerTool(
   }
 );
 
-// ── Tool 9: update_ticket ───────────────────────────
 server.registerTool(
   'infoset_update_ticket',
   {
@@ -303,7 +290,6 @@ server.registerTool(
   }
 );
 
-// ── Tool 10: list_contacts ──────────────────────────
 server.registerTool(
   'infoset_list_contacts',
   {
@@ -328,7 +314,6 @@ server.registerTool(
   }
 );
 
-// ── Tool 11: get_company ────────────────────────────
 server.registerTool(
   'infoset_get_company',
   {
@@ -343,7 +328,6 @@ server.registerTool(
   }
 );
 
-// ── Tool 12: get_ticket_stats ───────────────────────
 server.registerTool(
   'infoset_get_ticket_stats',
   {
@@ -382,7 +366,6 @@ server.registerTool(
   }
 );
 
-// ── Start ───────────────────────────────────────────
 async function main() {
   await login();
   const transport = new StdioServerTransport();
