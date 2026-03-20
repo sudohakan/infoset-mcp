@@ -9,20 +9,53 @@ permissions:
   contents: write
 
 jobs:
-  release:
+  validate:
+    name: Validate Release
     runs-on: ubuntu-latest
 
     steps:
       - uses: actions/checkout@v4
 
-      - name: Use Node.js 20
-        uses: actions/setup-node@v4
+      - uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 22
           cache: npm
 
       - run: npm ci
-      - run: npm test
+
+      - name: Run tests
+        run: npm test
+
+      - name: Verify tag matches package version
+        env:
+          TAG_NAME: ${{ github.ref_name }}
+        run: |
+          TAG_VERSION="${TAG_NAME#v}"
+          PKG_VERSION=$(node -e "console.log(require('./package.json').version)")
+          if [ "$TAG_VERSION" != "$PKG_VERSION" ]; then
+            echo "::error::Tag $TAG_VERSION does not match package.json version $PKG_VERSION"
+            exit 1
+          fi
+          echo "Tag matches package version: $TAG_VERSION"
+
+      - name: Verify CHANGELOG has entry for this version
+        env:
+          TAG_NAME: ${{ github.ref_name }}
+        run: |
+          VERSION="${TAG_NAME#v}"
+          if ! grep -q "\[${VERSION}\]" CHANGELOG.md; then
+            echo "::error::CHANGELOG.md has no entry for version $VERSION"
+            exit 1
+          fi
+          echo "CHANGELOG entry found for $VERSION"
+
+  release:
+    name: Create Release
+    needs: validate
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
 
       - name: Extract changelog for this version
         id: changelog

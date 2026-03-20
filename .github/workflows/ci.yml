@@ -6,8 +6,12 @@ on:
   pull_request:
     branches: [main]
 
+permissions:
+  contents: read
+
 jobs:
   test:
+    name: Test (Node ${{ matrix.node-version }})
     runs-on: ubuntu-latest
 
     strategy:
@@ -25,4 +29,60 @@ jobs:
 
       - run: npm ci
 
-      - run: npm test
+      - name: Run tests
+        run: npm test
+
+      - name: Run tests with coverage
+        if: matrix.node-version == 22
+        run: npm run test:coverage
+
+      - name: Upload coverage
+        if: matrix.node-version == 22
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-report
+          path: coverage/
+          retention-days: 7
+
+  lint:
+    name: Lint & Audit
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+
+      - name: Check for credentials in source
+        run: |
+          if grep -rn --include='*.mjs' --include='*.js' -i 'password.*=.*["\x27][^"\x27]*["\x27]' src/ 2>/dev/null | grep -v 'process\.env\|\.env\|example\|placeholder\|YOUR_'; then
+            echo "::error::Hardcoded credentials detected in source files"
+            exit 1
+          fi
+          echo "No hardcoded credentials found"
+
+      - name: Verify package.json version matches server
+        run: |
+          PKG_VERSION=$(node -e "console.log(require('./package.json').version)")
+          SERVER_VERSION=$(grep -o "version: '[^']*'" src/mcp-server.mjs | head -1 | grep -o "[0-9]*\.[0-9]*\.[0-9]*")
+          if [ "$PKG_VERSION" != "$SERVER_VERSION" ]; then
+            echo "::error::Version mismatch: package.json=$PKG_VERSION, mcp-server.mjs=$SERVER_VERSION"
+            exit 1
+          fi
+          echo "Versions match: $PKG_VERSION"
+
+      - name: Audit dependencies
+        run: npm audit --omit=dev || true
+
+      - name: Check for unused dependencies
+        run: |
+          for dep in $(node -e "Object.keys(require('./package.json').dependencies).forEach(d => console.log(d))"); do
+            if ! grep -rq "$dep" src/; then
+              echo "::warning::Possibly unused dependency: $dep"
+            fi
+          done
