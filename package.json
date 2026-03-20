@@ -1,6 +1,6 @@
 {
   "name": "infoset-mcp",
-  "version": "2.1.1",
+  "version": "2.2.0",
   "type": "module",
   "description": "Infoset CRM MCP Server — Model Context Protocol server for Infoset ticket management",
   "main": "src/mcp-server.mjs",
