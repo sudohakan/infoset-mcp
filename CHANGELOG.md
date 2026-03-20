@@ -5,6 +5,23 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.1.1] - 2026-03-20
+
+### Changed
+- Remove dead code (unused config.js, utils.js and their tests)
+- Remove all code comments from source files
+- Rename jest.config.js to jest.config.cjs for ESM compatibility
+- Add `type: module` and `files` array to package.json
+
+### Fixed
+- McpServer version now matches package.json (was hardcoded as 1.0.0)
+- Replace Turkish test data with English equivalents
+
+### Added
+- Comprehensive README with architecture, rate limiting, error handling, and scope sections
+- CONTRIBUTING.md with code style and PR guidelines
+- SECURITY.md with credential handling and vulnerability reporting
+
 ## [2.1.0] - 2026-03-17
 
 ### Fixed
