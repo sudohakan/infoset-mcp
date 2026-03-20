@@ -64,7 +64,25 @@ The server requires three environment variables:
 <details>
 <summary><strong>Option A &mdash; MCP Client Configuration (Recommended)</strong></summary>
 
-Add to your `.claude.json` (or equivalent MCP client config):
+Add to your `.claude.json` (or equivalent MCP client config).
+
+**Using env-wrapper (recommended — reads credentials from `.env`, no secrets in config):**
+
+```json
+{
+  "mcpServers": {
+    "infoset": {
+      "command": "/absolute/path/to/infoset-mcp/scripts/env-wrapper.sh",
+      "args": ["/absolute/path/to/infoset-mcp/src/mcp-server.mjs"],
+      "env": {}
+    }
+  }
+}
+```
+
+Then create a `.env` file in the project root (see `.env.example`).
+
+**Alternative — inline env (not recommended, secrets in config file):**
 
 ```json
 {
