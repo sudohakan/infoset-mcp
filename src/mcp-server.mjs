@@ -97,7 +97,7 @@ async function apiRequest(method, url, data = null, params = null) {
 
 const server = new McpServer({
   name: 'infoset',
-  version: '2.1.1',
+  version: '2.2.0',
 });
 
 server.registerTool(
