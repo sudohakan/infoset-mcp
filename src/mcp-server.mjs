@@ -34,10 +34,14 @@ async function login() {
   return userId;
 }
 
+let loginPromise = null;
+
 async function ensureAuth() {
   const now = Math.floor(Date.now() / 1000);
   if (!jwtToken || now >= tokenExpiry - 60) {
-    await login();
+    if (loginPromise) return loginPromise;
+    loginPromise = login();
+    try { await loginPromise; } finally { loginPromise = null; }
   }
 }
 
@@ -127,7 +131,7 @@ server.registerTool(
 
     const queryParts = Object.entries(p).map(([k, v]) => `${k}=${encodeURIComponent(v)}`);
     if (params.status && params.status.length > 0) {
-      params.status.forEach(s => queryParts.push(`Status=${s}`));
+      params.status.forEach(s => queryParts.push(`Status=${encodeURIComponent(s)}`));
     }
 
     const data = await apiRequest('get', `/v1/tickets?${queryParts.join('&')}`);
@@ -232,7 +236,7 @@ server.registerTool(
 
     const queryParts = Object.entries(p).map(([k, v]) => `${k}=${encodeURIComponent(v)}`);
     if (status && status.length > 0) {
-      status.forEach(s => queryParts.push(`Status=${s}`));
+      status.forEach(s => queryParts.push(`Status=${encodeURIComponent(s)}`));
     }
 
     const data = await apiRequest('get', `/v1/tickets?${queryParts.join('&')}`);
