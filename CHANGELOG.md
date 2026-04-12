@@ -5,6 +5,18 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.2.1] - 2026-04-12
+
+### Changed
+- Auth model migrated from JWT to API key (`X-API-Key` header)
+- Coverage thresholds adjusted for new batch tools
+- Unused dependencies removed (`dotenv`)
+- Security contact updated
+
+### Added
+- 4 batch tools: `batch_get_tickets`, `batch_get_ticket_logs`, `batch_get_contacts`, `batch_get_companies`
+- README redesigned with HakanMCP-style centered header, badges, and tool tables
+
 ## [2.2.0] - 2026-03-20
 
 ### Added
