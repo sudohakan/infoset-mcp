@@ -13,7 +13,7 @@
 
 <br>
 
-**16 tools** &bull; **API key auth** &bull; **Rate limit protection** &bull; **3 dependencies** &bull; **54 tests**
+**16 tools** &bull; **API key auth** &bull; **Rate limit protection** &bull; **3 dependencies** &bull; **53 tests**
 
 [Quick Start](#quick-start) &bull; [Tools](#tools) &bull; [Architecture](#architecture) &bull; [Examples](#usage-examples) &bull; [Development](#development)
 
