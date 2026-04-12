@@ -77,7 +77,7 @@ jobs:
           echo "Versions match: $PKG_VERSION"
 
       - name: Audit dependencies
-        run: npm audit --omit=dev || true
+        run: npm audit --omit=dev
 
       - name: Check for unused dependencies
         run: |

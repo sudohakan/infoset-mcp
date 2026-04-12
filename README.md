@@ -13,7 +13,7 @@
 
 <br>
 
-**12 tools** &bull; **JWT auto-refresh** &bull; **Rate limit protection** &bull; **4 dependencies** &bull; **54 tests**
+**16 tools** &bull; **API key auth** &bull; **Rate limit protection** &bull; **3 dependencies** &bull; **54 tests**
 
 [Quick Start](#quick-start) &bull; [Tools](#tools) &bull; [Architecture](#architecture) &bull; [Examples](#usage-examples) &bull; [Development](#development)
 
@@ -27,8 +27,8 @@
 
 ## Features
 
-- **12 production-ready tools** covering the full helpdesk ticket lifecycle
-- **JWT authentication** with automatic token refresh on expiry &mdash; no mid-session interruptions
+- **16 production-ready tools** covering the full helpdesk ticket lifecycle (including 4 batch tools)
+- **API key authentication** &mdash; simple, stateless, no token management needed
 - **Smart rate limiting** &mdash; monitors `x-ratelimit-remaining` headers and pauses before hitting limits
 - **Retry logic** &mdash; automatic retry with backoff for 401 (token refresh) and 429 (rate limit) responses
 - **Zero configuration beyond credentials** &mdash; works out of the box with sensible defaults
@@ -53,12 +53,11 @@ npm install
 
 ### Configuration
 
-The server requires three environment variables:
+The server requires one environment variable:
 
 | Variable | Required | Description |
 |----------|:--------:|-------------|
-| `INFOSET_EMAIL` | Yes | Your Infoset login email |
-| `INFOSET_PASSWORD` | Yes | Your Infoset login password |
+| `INFOSET_API_KEY` | Yes | Your Infoset API key |
 | `INFOSET_BASE_URL` | No | API base URL (default: `https://api.infoset.app`) |
 
 <details>
@@ -82,7 +81,7 @@ Add to your `.claude.json` (or equivalent MCP client config).
 
 Then create a `.env` file in the project root (see `.env.example`).
 
-**Alternative — inline env (not recommended, secrets in config file):**
+**Alternative — inline env (not recommended, API key in config file):**
 
 ```json
 {
@@ -91,8 +90,7 @@ Then create a `.env` file in the project root (see `.env.example`).
       "command": "node",
       "args": ["/absolute/path/to/infoset-mcp/src/mcp-server.mjs"],
       "env": {
-        "INFOSET_EMAIL": "your-email@example.com",
-        "INFOSET_PASSWORD": "your-password",
+        "INFOSET_API_KEY": "your-api-key",
         "INFOSET_BASE_URL": "https://api.infoset.app"
       }
     }
@@ -150,6 +148,18 @@ npm start
 |------|-------------|----------------|
 | `infoset_get_email` | Get email thread content | `emailId` |
 | `infoset_get_sla_breaches` | Get SLA breach data for a ticket | `ticketId` |
+
+</details>
+
+<details open>
+<summary><h3>Batch Operations (4 tools)</h3></summary>
+
+| Tool | Description | Key Parameters |
+|------|-------------|----------------|
+| `infoset_batch_get_tickets` | Get multiple tickets in parallel | `ticketIds[]` |
+| `infoset_batch_get_ticket_logs` | Get logs for multiple tickets | `ticketIds[]`, `itemsPerPage` |
+| `infoset_batch_get_contacts` | Get multiple contacts (auto-dedup) | `contactIds[]` |
+| `infoset_batch_get_companies` | Get multiple companies (auto-dedup) | `companyIds[]` |
 
 </details>
 
@@ -235,20 +245,17 @@ infoset_get_ticket_stats {}
 flowchart LR
     A["MCP Client<br>(Claude, Cursor)"] <-->|stdio| B["infoset-mcp<br>(Node.js)"]
     B <-->|HTTPS| C["Infoset API<br>api.infoset.app"]
-    B --- D["JWT Auth Manager"]
+    B --- D["API Key Auth"]
     B --- E["Rate Limit Monitor"]
-    B --- F["Retry Handler<br>(401/429)"]
+    B --- F["Retry Handler<br>(429)"]
 ```
 
 The server runs as a stdio-based MCP process. The MCP client spawns it, sends tool call requests over stdin, and receives JSON responses over stdout. All diagnostic logging goes to stderr.
 
 <details>
-<summary><strong>Authentication Flow</strong></summary>
+<summary><strong>Authentication</strong></summary>
 
-1. On startup, the server authenticates with Infoset using email/password credentials
-2. A JWT token is obtained and cached in memory
-3. Before each API request, the token expiry is checked &mdash; if within 60 seconds of expiry, a fresh token is obtained automatically
-4. On 401 responses, the token is invalidated and re-obtained transparently (up to 3 retries)
+The server authenticates with the Infoset API using an API key passed via the `INFOSET_API_KEY` environment variable. The key is sent as an `X-API-Key` header on every request. No token management, refresh, or login flow is needed.
 
 </details>
 
@@ -288,11 +295,11 @@ npm start         # Start server in standalone mode
 
 The test suite covers:
 
-- All 12 tool registrations and their schemas
+- All 16 tool registrations and their schemas
 - Happy path for every tool handler
 - Error handling (404, 400, 500, network errors)
 - Rate limit retry logic (429 backoff and exhaustion)
-- Token refresh logic (401 re-authentication)
+- Authentication error handling
 
 </details>
 

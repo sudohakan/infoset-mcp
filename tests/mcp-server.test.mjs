@@ -1,20 +1,13 @@
 import { jest, describe, test, expect, beforeAll, beforeEach, afterAll } from '@jest/globals';
 
 // ── Env setup (must be before module import) ─────────────────────────────────
-process.env.INFOSET_EMAIL = 'test@test.com';
-process.env.INFOSET_PASSWORD = 'test-pass';
+process.env.INFOSET_API_KEY = 'test-api-key-123';
 process.env.INFOSET_BASE_URL = 'https://test.infoset.app';
-
-// ── Build fake JWT ───────────────────────────────────────────────────────────
-const fakePayload = { Id: '42', exp: Math.floor(Date.now() / 1000) + 3600 };
-const fakeJwt = 'hdr.' + Buffer.from(JSON.stringify(fakePayload)).toString('base64') + '.sig';
-
-const expiredPayload = { Id: '42', exp: Math.floor(Date.now() / 1000) - 100 };
-const expiredJwt = 'hdr.' + Buffer.from(JSON.stringify(expiredPayload)).toString('base64') + '.sig';
 
 // ── Mock axios ───────────────────────────────────────────────────────────────
 const mockAxios = jest.fn();
-mockAxios.post = jest.fn().mockResolvedValue({ data: fakeJwt });
+mockAxios.get = jest.fn().mockResolvedValue({ data: { id: 42 } });
+mockAxios.post = jest.fn().mockResolvedValue({ data: {} });
 mockAxios.create = jest.fn(() => mockAxios);
 
 jest.unstable_mockModule('axios', () => ({
@@ -77,9 +70,8 @@ function mockNetworkError(message = 'Network Error') {
 describe('mcp-server.mjs', () => {
   beforeEach(() => {
     mockAxios.mockReset();
+    mockAxios.get.mockReset();
     mockAxios.post.mockReset();
-    // Default: apiRequest calls ensureAuth which may call login
-    mockAxios.post.mockResolvedValue({ data: fakeJwt });
     // Default: successful API response
     mockAxios.mockResolvedValue({
       data: { items: [], totalItems: 0 },
@@ -87,22 +79,20 @@ describe('mcp-server.mjs', () => {
     });
   });
 
-  // ── Auth Manager ─────────────────────────────────────────────────────────
-  describe('Auth Manager', () => {
-    test('login succeeds and enables API calls', async () => {
-      // Verify auth works by making a successful tool handler call
+  // ── Auth ─────────────────────────────────────────────────────────────────
+  describe('API Key Auth', () => {
+    test('API key is sent as X-API-Key header', async () => {
       mockApiResponse({ id: 1, subject: 'Auth test' });
       const result = await toolHandlers.infoset_get_ticket({ ticketId: 1 });
       const parsed = JSON.parse(result.content[0].text);
       expect(parsed.id).toBe(1);
-      // apiRequest calls ensureAuth → login if needed → sets Bearer token
       const lastCall = mockAxios.mock.calls[mockAxios.mock.calls.length - 1][0];
-      expect(lastCall.headers.Authorization).toMatch(/^Bearer /);
+      expect(lastCall.headers['X-API-Key']).toBe('test-api-key-123');
     });
 
-    test('all 12 tools are registered and callable', () => {
+    test('all 16 tools are registered and callable', () => {
       const registeredTools = Object.keys(toolHandlers);
-      expect(registeredTools).toHaveLength(12);
+      expect(registeredTools).toHaveLength(16);
     });
 
     test('each tool handler is a function', () => {
@@ -376,20 +366,8 @@ describe('mcp-server.mjs', () => {
   });
 
   // ── 401 Handling ────────────────────────────────────────────────────────
-  describe('401 handling — automatic token refresh', () => {
-    test('401 triggers re-login and retries the request', async () => {
-      mockApiError(401, { message: 'Unauthorized' });
-      mockApiResponse({ id: 123, subject: 'Test' });
-
-      const result = await toolHandlers.infoset_get_ticket({ ticketId: 123 });
-      const parsed = JSON.parse(result.content[0].text);
-      expect(parsed.id).toBe(123);
-    });
-
-    test('401 after max retries throws error', async () => {
-      mockApiError(401, { message: 'Unauthorized' });
-      mockApiError(401, { message: 'Unauthorized' });
-      mockApiError(401, { message: 'Unauthorized' });
+  describe('401 handling — invalid API key', () => {
+    test('401 throws authentication error', async () => {
       mockApiError(401, { message: 'Unauthorized' });
 
       await expect(toolHandlers.infoset_get_ticket({ ticketId: 1 }))
