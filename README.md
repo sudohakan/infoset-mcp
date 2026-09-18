@@ -19,7 +19,7 @@ Tickets &middot; Contacts &middot; Companies &middot; SLA &middot; Email Threads
 
 ---
 
-## Why infoset-mcp?
+## What it does
 
 AI assistants need structured access to helpdesk data. REST APIs require authentication boilerplate, pagination handling, and rate limit management on every call. infoset-mcp wraps the [Infoset](https://infoset.app) CRM API into **16 MCP tools** with built-in retry logic, rate limit protection, and batch operations, so your AI assistant can query tickets, contacts, and companies without dealing with HTTP plumbing.
 
@@ -31,7 +31,7 @@ AI assistants need structured access to helpdesk data. REST APIs require authent
 
 ---
 
-## Quick Start
+## Install
 
 ```bash
 git clone https://github.com/sudohakan/infoset-mcp.git
@@ -72,7 +72,7 @@ cp .env.example .env
 
 ---
 
-## Tools
+## Usage
 
 ### Ticket Operations (7 tools)
 
@@ -155,10 +155,7 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) for development setup, code style, and pu
 
 See [SECURITY.md](SECURITY.md) for credential handling and vulnerability reporting.
 
----
+## License
 
-<div align="center">
+[MIT](LICENSE).
 
-[MIT](LICENSE) | Built with [Claude Code](https://docs.anthropic.com/en/docs/claude-code)
-
-</div>

@@ -30,3 +30,7 @@ Desktop.ini
 
 # Graphify
 graphify-out/
+.env.*
+*.pem
+*.key
+credentials*
