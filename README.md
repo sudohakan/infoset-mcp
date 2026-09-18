@@ -140,7 +140,7 @@ MCP Client (Claude, Cursor)  <--stdio-->  infoset-mcp (Node.js)  <--HTTPS-->  In
 ## Development
 
 ```bash
-npm test              # Run 29 tests
+npm test              # Run the test suite
 npm run test:coverage # Run with coverage report
 npm start             # Start server standalone
 ```
