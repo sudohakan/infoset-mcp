@@ -189,9 +189,9 @@ server.registerTool(
 server.registerTool(
   'infoset_search_tickets',
   {
-    description: 'Search Infoset tickets by keyword and optional filters',
+    description: 'Search Infoset tickets by subject text (contains, case-insensitive) and optional filters. The API has no full-text search: Search/q/keyword are ignored and return every ticket. Company lookup is not exposed as a tool: over REST use companies?name=<text> then tickets?companyId=<id>.',
     inputSchema: z.object({
-      query: z.string().describe('Search keyword'),
+      query: z.string().describe('Text to match in the ticket subject'),
       status: z.array(z.number()).optional().describe('Status filter (1=Open, 2=Pending, 3=Resolved, 4=Closed)'),
       priority: z.number().optional().describe('Priority filter (1=Low, 2=Normal, 3=High, 4=Urgent)'),
       page: z.number().optional().describe('Page number (default: 1)'),
@@ -200,7 +200,7 @@ server.registerTool(
   },
   async ({ query, status, priority, page, itemsPerPage }) => {
     const p = {
-      Search: query,
+      subject: query,
       ItemsPerPage: itemsPerPage || 50,
       Page: page || 1,
       ReturnTotalItems: true,

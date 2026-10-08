@@ -216,7 +216,7 @@ describe('mcp-server.mjs', () => {
         itemsPerPage: 25,
       });
       const callUrl = mockAxios.mock.calls[mockAxios.mock.calls.length - 1][0].url;
-      expect(callUrl).toContain('Search=test');
+      expect(callUrl).toContain('subject=test');
       expect(callUrl).toContain('Status=1');
       expect(callUrl).toContain('Priority=3');
     });
